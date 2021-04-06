@@ -2,9 +2,12 @@
 " based on http://www.danielbigham.ca/cgi-bin/document.pl?mode=Display&DocumentID=1053
 " The default set of permitted characters includes reserved characters that don't have
 " to be encoded when used in the path component, as well as the / delimiter.
-if !exists('g:percent_permitted_characters')
-  let g:percent_permitted_characters = "!$&'()*+,/:;=@"
+if !exists('g:percent_permitted_reserved')
+  let g:percent_permitted_reserved = "!$&'()*+,/:;=@"
 endif
+
+" -._~ are always permitted. Decimal values: 45, 46, 95, 126
+let g:percent_unreserved_nonalnum = "-._~"
 
 function! PercentEncode(string)
   let l:chars = split(a:string, '\zs')
@@ -16,7 +19,7 @@ function! PercentDecode(string)
 endfunction
 
 function! s:PercentEncodeCharacter(char)
-  " Lower and uppercase ascii letters, digits, and -._~ are always permitted.
+  " Digits and lower and uppercase ascii letters are always permitted
   let l:decimal = char2nr(a:char)
   if l:decimal >= 48 && l:decimal <= 57  " digits
     return a:char
@@ -24,7 +27,7 @@ function! s:PercentEncodeCharacter(char)
     return a:char
   elseif l:decimal >= 97 && l:decimal <= 122 " lowercase letters
     return a:char
-  elseif a:char =~# '\v[-._~' . g:percent_permitted_characters . ']' " -._~ decimal values: 45, 46, 95, 126
+  elseif a:char =~# '\v[' . g:percent_unreserved_nonalnum . g:percent_permitted_reserved . ']'
     return a:char
   endif
   let l:bytes = []
