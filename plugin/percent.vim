@@ -78,7 +78,7 @@ endfunction
 
 " Use PercentDecode as includeexpr for selected filetypes to make gf work on local links
 let s:filetypes = get(g:, 'percent_filetypes', ['html', 'markdown', 'pandoc'])
-let s:filetypes_pattern = join(s:filetypes, "")
+let s:filetypes_pattern = join(s:filetypes, ",")
 
 augroup percent
   autocmd!
