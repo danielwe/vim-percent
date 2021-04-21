@@ -39,20 +39,20 @@ endfunction
 
 " Define operator functions that can be mapped to encode/decode text in a buffer
 function! PercentEncodeOp()
-  execute "set operatorfunc=" . expand("<SID>") . "PercentEncodeOp"
+  set operatorfunc=PercentInnerEncodeOp
   return 'g@'
 endfunction
 
 function! PercentDecodeOp(...)
-  execute "set operatorfunc=" . expand("<SID>") . "PercentDecodeOp"
+  set operatorfunc=PercentInnerDecodeOp
   return 'g@'
 endfunction
 
-function! s:PercentEncodeOp(type)
+function! PercentInnerEncodeOp(type)
   return s:SubstituteTextobjOp(a:type, "PercentEncode")
 endfunction
 
-function! s:PercentDecodeOp(type)
+function! PercentInnerDecodeOp(type)
   return s:SubstituteTextobjOp(a:type, "PercentDecode")
 endfunction
 
