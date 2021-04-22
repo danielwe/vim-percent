@@ -13,7 +13,7 @@ if !exists('g:percent_permitted')
   let g:percent_permitted = "!$&'()*+,/:;=@"
 endif
 
-" Use PercentDecode as includeexpr for selected filetypes to make gf work on local links
+" Use percent#decode as includeexpr to make gf work on local links
 let s:filetypes = get(g:, 'percent_filetypes', ['html', 'markdown', 'pandoc'])
 let s:filetypes_pattern = join(s:filetypes, ",")
 
