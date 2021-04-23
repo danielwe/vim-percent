@@ -3,6 +3,10 @@
 " Maintainer: Daniel Wennberg
 "
 
+function! percent#get(var) abort
+  return get(g:, 'percent_' . a:var, g:percent_defaults[a:var])
+endfunction
+
 function! percent#encode(string) abort
   let l:chars = split(a:string, '\zs')
   return join(map(l:chars, 's:encode_character(v:val)'), "")
@@ -16,7 +20,7 @@ endfunction
 let s:unreserved = '-._~'
 
 function! s:encode_character(char) abort
-  " Digits and lower and uppercase ascii letters are always permitted
+  " digits and lower and uppercase ascii letters are always permitted
   let l:decimal = char2nr(a:char)
   if l:decimal >= 48 && l:decimal <= 57  " digits
     return a:char
@@ -24,7 +28,7 @@ function! s:encode_character(char) abort
     return a:char
   elseif l:decimal >= 97 && l:decimal <= 122 " lowercase letters
     return a:char
-  elseif a:char =~# '\v[' . s:unreserved . g:percent_permitted . ']'
+  elseif a:char =~# '\v[' . s:unreserved . percent#get('permitted') . ']'
     return a:char
   endif
   let l:bytes = []
@@ -36,44 +40,5 @@ endfunction
 
 " export pattern matching characters in encoded strings
 function! percent#encoded_pattern() abort
-  return '[0-9A-Za-z%' . s:unreserved . g:percent_permitted . ']'
-endfunction
-
-" Define operator functions that can be mapped to encode/decode text in a buffer
-function! percent#encode_op() abort
-  set operatorfunc=percent#encode_op_inner
-  return 'g@'
-endfunction
-
-function! percent#decode_op(...) abort
-  set operatorfunc=percent#decode_op_inner
-  return 'g@'
-endfunction
-
-function! percent#encode_op_inner(type) abort
-  return s:substitute_textobj_op(a:type, "percent#encode")
-endfunction
-
-function! percent#decode_op_inner(type) abort
-  return s:substitute_textobj_op(a:type, "percent#decode")
-endfunction
-
-function! s:substitute_textobj_op(type, func) abort
-  let l:sel_save = &selection
-  let l:visual_marks_save = [getpos("'<"), getpos("'>")]
-
-  try
-    set selection=inclusive
-    let l:select = {"line": "'[V']", "char": "`[v`]", "block": "`[\<c-v>`]"}
-    normal! m`
-    execute "noautocmd keepjumps normal! \<Esc>" get(l:select, a:type)
-    execute 'noautocmd keepjumps %s/\v%V\_.*%V./\=' . a:func . '(submatch(0))'
-    execute "noautocmd keepjumps normal! \<Esc>"
-    normal! ``
-    nohl
-  finally
-    call setpos("'<", l:visual_marks_save[0])
-    call setpos("'>", l:visual_marks_save[1])
-    let &selection = l:sel_save
-  endtry
+  return '[0-9A-Za-z%' . s:unreserved . percent#get('permitted') . ']'
 endfunction

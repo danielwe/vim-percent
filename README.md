@@ -4,14 +4,14 @@ Here's a small vim-plugin to handle percent encoding and decoding of text to for
 
 Percent-encoding means replacing special characters with their literal byte values written out as `%XX`, where `X` represents a hexadecimal digit. For example, a space becomes `%20`. See <https://en.wikipedia.org/wiki/Percent-encoding> for details.
 
-The functionality of this plugin is exposed through the functions `percent#{en,de}code`, which take a single string as argument and returns the corresponding encoded/decoded string. Perhaps more usefully, the plugin also provides operator functions `percent#{en,de}code_op`, which can be mapped to operators that replace a text object or selection with its percent encoded/decoded counterpart. To make use of this, put something like the following in your `.vimrc`:
+The functionality of this plugin is exposed through the functions `percent#{en,de}code`, which take a single string as argument and returns the corresponding encoded/decoded string. Perhaps more usefully, the plugin also provides operator functions `percent#op#{en,de}code`, which can be mapped to operators that replace a text object or selection with its percent encoded/decoded counterpart. To make use of this, put something like the following in your `.vimrc`:
 
 ```vim
 " Percent encoding/decoding
-nmap <silent> <expr> <Leader>ne percent#encode_op()
-vmap <silent> <expr> <Leader>ne percent#encode_op()
-nmap <silent> <expr> <Leader>nd percent#decode_op()
-vmap <silent> <expr> <Leader>nd percent#decode_op()
+nmap <silent> <expr> <Leader>ne percent#op#encode()
+vmap <silent> <expr> <Leader>ne percent#op#encode()
+nmap <silent> <expr> <Leader>nd percent#op#decode()
+vmap <silent> <expr> <Leader>nd percent#op#decode()
 ```
 
 Hit `<Leader>ndi(` inside the URL part of a percent-encoded markdown link to see the operator in action.
